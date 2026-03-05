@@ -200,6 +200,7 @@
 
     /* === Edit Mode === */
     #edit-btn {
+      display: none;
       position: fixed;
       bottom: 32px; right: 32px;
       z-index: 300;
@@ -213,6 +214,7 @@
       cursor: pointer;
       transition: background 0.3s;
     }
+    #edit-btn.visible { display: block; }
     #edit-btn:hover { background: var(--ash); }
 
     #edit-bar {
@@ -487,6 +489,7 @@
   <button id="edit-btn">Edit Gallery</button>
   <div id="edit-bar">
     <button id="show-hidden-btn">Show Hidden</button>
+    <button id="export-btn">Export</button>
     <button id="reset-btn">Reset</button>
   </div>
 
@@ -508,16 +511,25 @@
       const showHiddenBtn = document.getElementById('show-hidden-btn');
       let dragSrc = null;
 
-      // --- Persist state to localStorage ---
+      // --- Show edit button only with ?edit in URL ---
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.has('edit')) {
+        editBtn.classList.add('visible');
+      }
+
+      // --- Persist state ---
       const STORAGE_KEY = 'erin-hare-gallery';
 
       function saveState() {
-        const items = [...document.querySelectorAll('.gallery-item')];
-        const state = items.map(item => {
+        const visibleItems = [...gallery.querySelectorAll('.gallery-item')];
+        const hiddenItems = [...document.getElementById('hidden-gallery').querySelectorAll('.gallery-item')];
+        const allItems = [...visibleItems, ...hiddenItems];
+        const state = allItems.map(item => {
           const img = item.querySelector('img');
+          const isHidden = item.closest('#hidden-gallery') !== null;
           return {
             index: item.dataset.index,
-            hidden: item.classList.contains('hidden'),
+            hidden: isHidden,
             crop: {
               scale: parseFloat(img.dataset.cropScale) || 1,
               x: parseFloat(img.dataset.cropX) || 0,
@@ -532,35 +544,52 @@
         const s = parseFloat(img.dataset.cropScale) || 1;
         const x = parseFloat(img.dataset.cropX) || 0;
         const y = parseFloat(img.dataset.cropY) || 0;
+        if (s === 1 && x === 0 && y === 0) {
+          img.style.transform = '';
+          img.style.transformOrigin = '';
+          return;
+        }
         img.style.transformOrigin = '0 0';
         img.style.transform = `scale(${s}) translate(${x}px, ${y}px)`;
       }
 
-      function loadState() {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) return;
+      function applyState(state) {
         const hiddenG = document.getElementById('hidden-gallery');
-        try {
-          const state = JSON.parse(raw);
-          state.forEach(({ index, hidden, crop }) => {
-            const item = gallery.querySelector(`[data-index="${index}"]`) || hiddenG.querySelector(`[data-index="${index}"]`);
-            if (!item) return;
-            if (hidden) {
-              item.classList.add('hidden');
-              hiddenG.appendChild(item);
-            } else {
-              item.classList.remove('hidden');
-              gallery.appendChild(item);
+        state.forEach(({ index, hidden, crop }) => {
+          const item = gallery.querySelector(`[data-index="${index}"]`) || hiddenG.querySelector(`[data-index="${index}"]`);
+          if (!item) return;
+          if (hidden) {
+            item.classList.add('hidden');
+            hiddenG.appendChild(item);
+          } else {
+            item.classList.remove('hidden');
+            gallery.appendChild(item);
+          }
+          if (crop) {
+            const img = item.querySelector('img');
+            img.dataset.cropScale = crop.scale || 1;
+            img.dataset.cropX = crop.x || 0;
+            img.dataset.cropY = crop.y || 0;
+            applyCrop(img);
+          }
+        });
+      }
+
+      // Load state: try gallery-state.json first, fall back to localStorage
+      function loadState() {
+        fetch('gallery-state.json')
+          .then(r => { if (!r.ok) throw new Error(); return r.json(); })
+          .then(state => {
+            applyState(state);
+            triggerReveal();
+          })
+          .catch(() => {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (raw) {
+              try { applyState(JSON.parse(raw)); } catch(e) {}
             }
-            if (crop) {
-              const img = item.querySelector('img');
-              img.dataset.cropScale = crop.scale || 1;
-              img.dataset.cropX = crop.x || 0;
-              img.dataset.cropY = crop.y || 0;
-              applyCrop(img);
-            }
+            triggerReveal();
           });
-        } catch(e) {}
       }
 
       loadState();
@@ -582,7 +611,6 @@
           reveals.forEach(el => obs.observe(el));
         }
       }
-      triggerReveal();
 
       // --- Lightbox ---
       let currentLbIndex = -1;
@@ -647,6 +675,32 @@
           editBtn.textContent = 'Saved ✓';
           setTimeout(() => editBtn.textContent = 'Edit Gallery', 1500);
         }
+      });
+
+      // --- Export state as JSON file ---
+      document.getElementById('export-btn').addEventListener('click', () => {
+        const visibleItems = [...gallery.querySelectorAll('.gallery-item')];
+        const hiddenItems = [...document.getElementById('hidden-gallery').querySelectorAll('.gallery-item')];
+        const allItems = [...visibleItems, ...hiddenItems];
+        const state = allItems.map(item => {
+          const img = item.querySelector('img');
+          const isHidden = item.closest('#hidden-gallery') !== null;
+          return {
+            index: item.dataset.index,
+            hidden: isHidden,
+            crop: {
+              scale: parseFloat(img.dataset.cropScale) || 1,
+              x: parseFloat(img.dataset.cropX) || 0,
+              y: parseFloat(img.dataset.cropY) || 0
+            }
+          };
+        });
+        const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'gallery-state.json';
+        a.click();
+        URL.revokeObjectURL(a.href);
       });
 
       // --- Hide toggle ---
