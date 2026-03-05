@@ -1,0 +1,8 @@
+.DS_Store
+.claude/
+video/
+images/IMG_*
+images/*.MOV
+images/*.PNG
+images/madie-*
+images/sfengagement*

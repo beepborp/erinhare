@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Erin Hare — Bridal Hair</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --cream: #faf8f5;
+      --fog:   #e2ddd6;
+      --stone: #b0aa9f;
+      --ash:   #7a7570;
+      --ink:   #2e2b27;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--cream);
+      color: var(--ink);
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      overflow-x: hidden;
+    }
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 32px 56px;
+      background: transparent;
+    }
+    .logo { display: flex; flex-direction: column; gap: 3px; }
+    .logo-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300; font-size: 17px;
+      letter-spacing: 0.08em; color: var(--ink);
+    }
+    .logo-sub {
+      font-family: 'Jost', sans-serif;
+      font-weight: 200; font-size: 10px;
+      letter-spacing: 0.35em; text-transform: uppercase; color: var(--stone);
+    }
+    nav a {
+      font-family: 'Jost', sans-serif;
+      font-weight: 200; font-size: 10px;
+      letter-spacing: 0.35em; text-transform: uppercase;
+      text-decoration: none; color: var(--stone);
+      margin-left: 44px; transition: color 0.4s;
+    }
+    nav a:hover { color: var(--ink); }
+    .hero {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      height: 100vh;
+    }
+    .hero-left {
+      display: flex; flex-direction: column;
+      justify-content: center;
+      padding: 80px 72px 60px 56px;
+    }
+    .hero-right { position: relative; overflow: hidden; }
+    .hero-right img {
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center top;
+      opacity: 1;
+    }
+    .hero-eyebrow {
+      font-family: 'Jost', sans-serif;
+      font-weight: 200; font-size: 10px;
+      letter-spacing: 0.4em; text-transform: uppercase;
+      color: var(--stone); margin-bottom: 28px;
+      opacity: 1;
+    }
+    .hero-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(56px, 6.5vw, 96px);
+      line-height: 0.95; letter-spacing: -0.01em; color: var(--ink);
+      opacity: 1;
+    }
+    .hero-name em { display: block; font-style: italic; color: var(--ash); }
+    .divider {
+      width: 36px; height: 1px; background: var(--fog);
+      margin: 44px 0;
+      opacity: 1;
+    }
+    .hero-bio {
+      font-size: 17px; line-height: 1.95; color: var(--ash); max-width: 360px;
+      opacity: 1;
+    }
+    .hero-cta {
+      margin-top: 52px;
+      opacity: 1;
+    }
+    .hero-cta a {
+      font-family: 'Jost', sans-serif;
+      font-weight: 200; font-size: 10px;
+      letter-spacing: 0.4em; text-transform: uppercase;
+      text-decoration: none; color: var(--ink);
+      border-bottom: 1px solid var(--fog);
+      padding-bottom: 5px; transition: border-color 0.4s, color 0.4s;
+    }
+    .hero-cta a:hover { border-color: var(--stone); color: var(--ash); }
+    .section-header {
+      display: flex; align-items: center; gap: 28px;
+      padding: 88px 56px 48px;
+    }
+    .section-label {
+      font-family: 'Jost', sans-serif;
+      font-weight: 200; font-size: 10px;
+      letter-spacing: 0.4em; text-transform: uppercase;
+      color: var(--stone); white-space: nowrap;
+    }
+    .section-line { flex: 1; height: 1px; background: var(--fog); }
+    .gallery {
+      padding: 0 40px 96px;
+      columns: 3; column-gap: 14px;
+    }
+    .gallery-item {
+      break-inside: avoid; margin-bottom: 14px;
+      overflow: hidden; cursor: pointer;
+    }
+    .gallery-item img {
+      width: 100%; display: block;
+      transition: transform 0.8s cubic-bezier(0.25,0.46,0.45,0.94), filter 0.8s ease;
+      filter: saturate(0.9) brightness(1.01);
+    }
+    .gallery-item:hover img { transform: scale(1.04); filter: saturate(1) brightness(1); }
+    .lightbox {
+      position: fixed; inset: 0;
+      background: rgba(42,38,34,0.93);
+      z-index: 200; display: none;
+      align-items: center; justify-content: center;
+      cursor: pointer; backdrop-filter: blur(4px);
+    }
+    .lightbox.active { display: flex; }
+    .lightbox img { max-width: 86vw; max-height: 88vh; object-fit: contain; }
+    .lightbox-close {
+      position: absolute; top: 36px; right: 52px;
+      font-family: 'Jost', sans-serif;
+      font-weight: 200; font-size: 10px;
+      letter-spacing: 0.35em; text-transform: uppercase;
+      color: rgba(255,255,255,0.4); cursor: pointer; transition: color 0.3s;
+    }
+    .lightbox-close:hover { color: rgba(255,255,255,0.9); }
+    footer {
+      border-top: 1px solid var(--fog);
+      padding: 52px 56px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .footer-name {
+      font-family: 'Jost', sans-serif;
+      font-weight: 200; font-size: 10px;
+      letter-spacing: 0.35em; text-transform: uppercase; color: var(--stone);
+    }
+    .footer-links { display: flex; gap: 40px; }
+    .footer-links a {
+      font-family: 'Jost', sans-serif;
+      font-weight: 200; font-size: 10px;
+      letter-spacing: 0.35em; text-transform: uppercase;
+      text-decoration: none; color: var(--stone); transition: color 0.4s;
+    }
+    .footer-links a:hover { color: var(--ink); }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+    .reveal {
+      opacity: 1;
+      transition: opacity 1s ease, transform 1s ease;
+    }
+    .reveal.visible { opacity: 1; transform: none; }
+    @media (prefers-reduced-motion: reduce) {
+      .hero-right img,
+      .hero-eyebrow, .hero-name, .divider, .hero-bio, .hero-cta {
+        opacity: 1 !important; animation: none !important;
+      }
+      .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+    }
+    @media (max-width: 768px) {
+      header { padding: 24px 28px; }
+      nav { display: none; }
+      .hero { grid-template-columns: 1fr; height: auto; }
+      .hero-right { height: 100vw; order: -1; }
+      .hero-left { padding: 40px 28px 72px; }
+      .gallery { columns: 2; padding: 0 20px 72px; column-gap: 10px; }
+      .gallery-item { margin-bottom: 10px; }
+      .section-header { padding: 64px 28px 36px; }
+      footer { flex-direction: column; gap: 24px; padding: 44px 28px; text-align: center; }
+    }
+
+    /* === Edit Mode === */
+    #edit-btn {
+      position: fixed;
+      bottom: 32px; right: 32px;
+      z-index: 300;
+      background: var(--ink);
+      color: var(--cream);
+      border: none;
+      font-family: 'Jost', sans-serif;
+      font-weight: 200; font-size: 10px;
+      letter-spacing: 0.3em; text-transform: uppercase;
+      padding: 14px 28px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    #edit-btn:hover { background: var(--ash); }
+
+    #edit-bar {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 200;
+      background: var(--ink);
+      color: var(--cream);
+      padding: 14px 56px;
+      align-items: center;
+      gap: 32px;
+      font-family: 'Jost', sans-serif;
+      font-weight: 200; font-size: 10px;
+      letter-spacing: 0.3em; text-transform: uppercase;
+    }
+    #edit-bar span { color: var(--stone); }
+    #edit-bar button {
+      background: none;
+      border: 1px solid var(--stone);
+      color: var(--cream);
+      font-family: 'Jost', sans-serif;
+      font-weight: 200; font-size: 10px;
+      letter-spacing: 0.3em; text-transform: uppercase;
+      padding: 8px 20px;
+      cursor: pointer;
+      transition: border-color 0.3s, color 0.3s;
+    }
+    #edit-bar button:hover { border-color: var(--cream); }
+
+    body.edit-mode .gallery-item {
+      position: relative;
+      cursor: grab;
+      outline: 1px solid transparent;
+      transition: outline 0.2s;
+    }
+    body.edit-mode .gallery-item:hover { outline: 1px solid var(--stone); }
+    body.edit-mode .gallery-item.dragging {
+      opacity: 0.25; transition: opacity 0.2s;
+    }
+    .drag-clone {
+      position: fixed; z-index: 1000; pointer-events: none;
+      transform: scale(1.04); box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+      transition: none; overflow: hidden; border-radius: 2px;
+    }
+    .drag-clone img { width: 100%; display: block; }
+
+    .hide-btn {
+      display: none;
+      position: absolute;
+      top: 8px; right: 8px;
+      z-index: 10;
+      background: var(--ink);
+      color: var(--cream);
+      border: none;
+      width: 28px; height: 28px;
+      font-size: 14px;
+      cursor: pointer;
+      align-items: center; justify-content: center;
+      line-height: 1;
+      transition: background 0.2s;
+    }
+    .hide-btn:hover { background: #c0392b; }
+    body.edit-mode .hide-btn { display: flex; }
+
+    .gallery-item.hidden { display: none; }
+
+    .hidden-gallery {
+      display: none;
+      padding: 0 40px 96px;
+      columns: 3; column-gap: 14px;
+    }
+    body.edit-mode .hidden-gallery { display: block; }
+    .hidden-gallery::before {
+      content: 'HIDDEN PHOTOS';
+      display: block;
+      column-span: all;
+      font-family: 'Jost', sans-serif;
+      font-weight: 200; font-size: 10px;
+      letter-spacing: 0.4em; text-transform: uppercase;
+      color: var(--stone);
+      padding: 24px 0;
+      border-top: 1px solid var(--fog);
+      margin-bottom: 14px;
+    }
+    .hidden-gallery .gallery-item {
+      display: block;
+      opacity: 0.25;
+      filter: grayscale(1);
+    }
+    .hidden-gallery .gallery-item .hide-btn { background: #c0392b; }
+
+    body.edit-mode .gallery-item img { pointer-events: none; }
+
+    /* Crop mode */
+    .gallery-item.cropping {
+      outline: 2px solid var(--ink) !important;
+      z-index: 50;
+      cursor: grab;
+    }
+    .gallery-item.cropping img {
+      pointer-events: auto !important;
+      cursor: grab;
+    }
+    .gallery-item.cropping img:active { cursor: grabbing; }
+    .crop-controls {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      z-index: 20;
+      background: rgba(46,43,39,0.85);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 12px;
+      backdrop-filter: blur(6px);
+    }
+    .crop-controls input[type="range"] {
+      flex: 1;
+      accent-color: var(--cream);
+      height: 2px;
+    }
+    .crop-controls .crop-label {
+      font-family: 'Jost', sans-serif;
+      font-weight: 200; font-size: 9px;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--stone);
+      white-space: nowrap;
+    }
+    .crop-controls button {
+      background: none; border: 1px solid var(--stone);
+      color: var(--cream);
+      font-family: 'Jost', sans-serif;
+      font-weight: 200; font-size: 9px;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      padding: 5px 14px; cursor: pointer;
+      transition: border-color 0.2s;
+    }
+    .crop-controls button:hover { border-color: var(--cream); }
+
+
+    .lb-nav {
+      position: absolute;
+      top: 50%; transform: translateY(-50%);
+      background: none; border: none;
+      color: rgba(255,255,255,0.6);
+      font-size: 28px;
+      cursor: pointer;
+      padding: 20px;
+      transition: color 0.2s, opacity 0.2s;
+      z-index: 10;
+      line-height: 1;
+    }
+    .lb-nav:hover { color: #fff; }
+    .lb-prev { left: 24px; }
+    .lb-next { right: 24px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <span class="logo-name">erin hare</span>
+      <span class="logo-sub">Bridal Hair & Makeup</span>
+    </div>
+    <nav>
+      <a href="#gallery">Work</a>
+      <a href="/cdn-cgi/l/email-protection#fd9598919192bd988f9493959c8f98d39e9290">Contact</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="hero-left">
+      <p class="hero-eyebrow">Bridal Hair & Makeup · San Francisco</p>
+      <h1 class="hero-name">Erin<br><em>Hare</em></h1>
+      <div class="divider"></div>
+      <p class="hero-bio">Hair and makeup for brides who want to feel like themselves — refined, considered, and effortlessly beautiful. Available for weddings throughout California and beyond.</p>
+      <div class="hero-cta"><a href="/cdn-cgi/l/email-protection#365e535a5a597653445f585e5744531855595b">Inquire about your date</a></div>
+    </div>
+    <div class="hero-right">
+      <img src="images/photo-1.jpg" alt="Bridal hair by Erin Hare" />
+    </div>
+  </section>
+
+  <div class="section-header reveal" id="gallery">
+    <span class="section-label">Selected Work</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="gallery">    <div class="gallery-item reveal" data-index="0"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-2.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="1"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-3.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="2"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-4.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="3"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-5.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="4"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-6.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="5"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-7.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="6"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-8.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="7"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-9.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="8"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-10.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="9"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-11.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="10"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-12.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="11"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-13.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="12"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-14.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="13"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-15.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="14"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-16.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="15"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-17.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="16"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-18.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="17"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-19.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="18"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-20.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="19"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-21.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="20"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-22.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="21"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-23.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="22"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-24.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="23"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-25.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="24"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-26.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="25"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-27.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="26"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-28.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="27"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-29.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="28"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-30.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="29"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-31.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="30"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-32.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="31"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-33.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="32"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-34.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="33"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-35.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="34"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-36.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="35"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-37.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="36"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-38.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="37"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-39.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="38"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-40.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="39"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-41.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="40"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-42.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="41"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-43.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="42"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-44.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="43"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-45.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="44"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-46.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="45"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-47.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="46"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-48.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="47"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-49.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="48"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-50.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="49"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-51.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="50"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-52.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="51"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-53.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="52"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-54.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="53"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-55.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="54"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-56.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="55"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-57.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="56"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-58.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="57"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-59.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="58"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-60.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="59"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-61.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="60"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-62.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="61"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-63.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="62"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-64.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="63"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-65.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="64"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-66.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="65"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-67.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="66"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-68.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="67"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-69.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="68"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-70.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="69"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-71.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="70"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-72.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+    <div class="gallery-item reveal" data-index="71"><button class="hide-btn" title="Hide photo">×</button><img src="images/photo-73.jpg" alt="Hair by Erin Hare" loading="lazy" /></div>
+</div>
+
+  <div class="hidden-gallery" id="hidden-gallery"></div>
+
+  <footer>
+    <div class="footer-name">erin hare · bridal hair & makeup</div>
+    <div class="footer-links">
+      <a href="https://instagram.com" target="_blank">Instagram</a>
+      <a href="/cdn-cgi/l/email-protection#731b161f1f1c3316011a1d1b1201165d101c1e">Email</a>
+    </div>
+  </footer>
+
+  <button id="edit-btn">Edit Gallery</button>
+  <div id="edit-bar">
+    <button id="show-hidden-btn">Show Hidden</button>
+    <button id="reset-btn">Reset</button>
+  </div>
+
+  <div class="lightbox" id="lightbox">
+    <span id="lb-close" class="lightbox-close">Close</span>
+    <button id="lb-prev" class="lb-nav lb-prev">&#8592;</button>
+    <img id="lightbox-img" src="" alt="" />
+    <button id="lb-next" class="lb-nav lb-next">&#8594;</button>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+      const gallery = document.querySelector('.gallery');
+      const lightbox = document.getElementById('lightbox');
+      const lightboxImg = document.getElementById('lightbox-img');
+      const editBtn = document.getElementById('edit-btn');
+      const editBar = document.getElementById('edit-bar');
+      const showHiddenBtn = document.getElementById('show-hidden-btn');
+      let dragSrc = null;
+
+      // --- Persist state to localStorage ---
+      const STORAGE_KEY = 'erin-hare-gallery';
+
+      function saveState() {
+        const items = [...document.querySelectorAll('.gallery-item')];
+        const state = items.map(item => {
+          const img = item.querySelector('img');
+          return {
+            index: item.dataset.index,
+            hidden: item.classList.contains('hidden'),
+            crop: {
+              scale: parseFloat(img.dataset.cropScale) || 1,
+              x: parseFloat(img.dataset.cropX) || 0,
+              y: parseFloat(img.dataset.cropY) || 0
+            }
+          };
+        });
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      }
+
+      function applyCrop(img) {
+        const s = parseFloat(img.dataset.cropScale) || 1;
+        const x = parseFloat(img.dataset.cropX) || 0;
+        const y = parseFloat(img.dataset.cropY) || 0;
+        img.style.transformOrigin = '0 0';
+        img.style.transform = `scale(${s}) translate(${x}px, ${y}px)`;
+      }
+
+      function loadState() {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return;
+        const hiddenG = document.getElementById('hidden-gallery');
+        try {
+          const state = JSON.parse(raw);
+          state.forEach(({ index, hidden, crop }) => {
+            const item = gallery.querySelector(`[data-index="${index}"]`) || hiddenG.querySelector(`[data-index="${index}"]`);
+            if (!item) return;
+            if (hidden) {
+              item.classList.add('hidden');
+              hiddenG.appendChild(item);
+            } else {
+              item.classList.remove('hidden');
+              gallery.appendChild(item);
+            }
+            if (crop) {
+              const img = item.querySelector('img');
+              img.dataset.cropScale = crop.scale || 1;
+              img.dataset.cropX = crop.x || 0;
+              img.dataset.cropY = crop.y || 0;
+              applyCrop(img);
+            }
+          });
+        } catch(e) {}
+      }
+
+      loadState();
+
+      // --- Scroll reveal ---
+      function triggerReveal() {
+        const reveals = document.querySelectorAll('.gallery-item:not(.hidden)');
+        const obs = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+              obs.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.07 });
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+          reveals.forEach(el => el.classList.add("visible"));
+        } else {
+          reveals.forEach(el => obs.observe(el));
+        }
+      }
+      triggerReveal();
+
+      // --- Lightbox ---
+      let currentLbIndex = -1;
+
+      function getVisibleItems() {
+        return [...gallery.querySelectorAll('.gallery-item:not(.hidden)')];
+      }
+
+      function showLightbox(index) {
+        const items = getVisibleItems();
+        if (index < 0 || index >= items.length) return;
+        currentLbIndex = index;
+        lightboxImg.src = items[index].querySelector('img').src;
+        lightbox.classList.add('active');
+      }
+
+      gallery.addEventListener('click', e => {
+        if (document.body.classList.contains('edit-mode')) return;
+        const item = e.target.closest('.gallery-item');
+        if (!item) return;
+        const items = getVisibleItems();
+        const index = items.indexOf(item);
+        if (index !== -1) showLightbox(index);
+      });
+
+      document.getElementById('lb-prev').addEventListener('click', e => {
+        e.stopPropagation();
+        if (currentLbIndex > 0) showLightbox(currentLbIndex - 1);
+      });
+
+      document.getElementById('lb-next').addEventListener('click', e => {
+        e.stopPropagation();
+        const items = getVisibleItems();
+        if (currentLbIndex < items.length - 1) showLightbox(currentLbIndex + 1);
+      });
+
+      document.getElementById('lb-close').addEventListener('click', e => {
+        e.stopPropagation();
+        lightbox.classList.remove('active');
+      });
+
+      lightbox.addEventListener('click', () => lightbox.classList.remove('active'));
+
+      document.addEventListener('keydown', e => {
+        if (!lightbox.classList.contains('active')) return;
+        if (e.key === 'Escape') lightbox.classList.remove('active');
+        if (e.key === 'ArrowLeft' && currentLbIndex > 0) showLightbox(currentLbIndex - 1);
+        if (e.key === 'ArrowRight') {
+          const items = getVisibleItems();
+          if (currentLbIndex < items.length - 1) showLightbox(currentLbIndex + 1);
+        }
+      });
+
+      // --- Edit mode toggle ---
+      editBtn.addEventListener('click', () => {
+        document.body.classList.toggle('edit-mode');
+        const isEdit = document.body.classList.contains('edit-mode');
+        editBtn.textContent = isEdit ? 'Done' : 'Edit Gallery';
+        editBar.style.display = isEdit ? 'flex' : 'none';
+        if (!isEdit) {
+          saveState();
+          editBtn.textContent = 'Saved ✓';
+          setTimeout(() => editBtn.textContent = 'Edit Gallery', 1500);
+        }
+      });
+
+      // --- Hide toggle ---
+      const hiddenGallery = document.getElementById('hidden-gallery');
+
+      gallery.addEventListener('click', e => {
+        if (!document.body.classList.contains('edit-mode')) return;
+        const btn = e.target.closest('.hide-btn');
+        if (!btn) return;
+        const item = btn.closest('.gallery-item');
+        item.classList.add('hidden');
+        hiddenGallery.appendChild(item);
+      });
+
+      hiddenGallery.addEventListener('click', e => {
+        if (!document.body.classList.contains('edit-mode')) return;
+        const btn = e.target.closest('.hide-btn');
+        if (!btn) return;
+        const item = btn.closest('.gallery-item');
+        item.classList.remove('hidden');
+        gallery.appendChild(item);
+      });
+
+      // --- Restore hidden ---
+      showHiddenBtn.addEventListener('click', () => {
+        hiddenGallery.querySelectorAll('.gallery-item').forEach(item => {
+          item.classList.remove('hidden');
+          gallery.appendChild(item);
+        });
+      });
+
+      // --- Drag to reorder (pointer-based) ---
+      let clone = null;
+      let offsetX = 0, offsetY = 0;
+
+      function onPointerDown(e) {
+        if (!document.body.classList.contains('edit-mode')) return;
+        const item = e.target.closest('.gallery-item');
+        if (!item || e.target.closest('.hide-btn') || item.classList.contains('cropping')) return;
+        e.preventDefault();
+        dragSrc = item;
+        const rect = item.getBoundingClientRect();
+        offsetX = e.clientX - rect.left;
+        offsetY = e.clientY - rect.top;
+
+        clone = item.cloneNode(true);
+        clone.className = 'drag-clone';
+        clone.style.width = rect.width + 'px';
+        clone.style.height = rect.height + 'px';
+        clone.style.left = rect.left + 'px';
+        clone.style.top = rect.top + 'px';
+        document.body.appendChild(clone);
+
+        item.classList.add('dragging');
+        document.addEventListener('pointermove', onPointerMove);
+        document.addEventListener('pointerup', onPointerUp);
+      }
+
+      function onPointerMove(e) {
+        if (!clone || !dragSrc) return;
+        clone.style.left = (e.clientX - offsetX) + 'px';
+        clone.style.top = (e.clientY - offsetY) + 'px';
+
+        clone.style.display = 'none';
+        const el = document.elementFromPoint(e.clientX, e.clientY);
+        clone.style.display = '';
+        const target = el ? el.closest('.gallery-item') : null;
+        if (target && target !== dragSrc) {
+          const rect = target.getBoundingClientRect();
+          if (e.clientY < rect.top + rect.height / 2) {
+            gallery.insertBefore(dragSrc, target);
+          } else {
+            gallery.insertBefore(dragSrc, target.nextSibling);
+          }
+        }
+      }
+
+      function onPointerUp() {
+        if (clone) { clone.remove(); clone = null; }
+        if (dragSrc) { dragSrc.classList.remove('dragging'); saveState(); dragSrc = null; }
+        document.removeEventListener('pointermove', onPointerMove);
+        document.removeEventListener('pointerup', onPointerUp);
+      }
+
+      gallery.addEventListener('pointerdown', onPointerDown);
+
+      // --- Crop mode ---
+      let croppingItem = null;
+      let cropDragging = false;
+      let cropStartX = 0, cropStartY = 0, cropOrigX = 0, cropOrigY = 0;
+
+      function enterCropMode(item) {
+        if (croppingItem) exitCropMode();
+        croppingItem = item;
+        item.classList.add('cropping');
+
+        const img = item.querySelector('img');
+        const s = parseFloat(img.dataset.cropScale) || 1;
+
+        const controls = document.createElement('div');
+        controls.className = 'crop-controls';
+        controls.innerHTML = `
+          <span class="crop-label">Zoom</span>
+          <input type="range" min="1" max="3" step="0.05" value="${s}" />
+          <button class="crop-done">Done</button>
+        `;
+        item.appendChild(controls);
+
+        const slider = controls.querySelector('input');
+        slider.addEventListener('input', () => {
+          img.dataset.cropScale = slider.value;
+          applyCrop(img);
+        });
+
+        controls.querySelector('.crop-done').addEventListener('click', e => {
+          e.stopPropagation();
+          exitCropMode();
+        });
+      }
+
+      function exitCropMode() {
+        if (!croppingItem) return;
+        croppingItem.classList.remove('cropping');
+        const controls = croppingItem.querySelector('.crop-controls');
+        if (controls) controls.remove();
+        croppingItem = null;
+        saveState();
+      }
+
+      // Double-click to enter crop mode
+      gallery.addEventListener('dblclick', e => {
+        if (!document.body.classList.contains('edit-mode')) return;
+        const item = e.target.closest('.gallery-item');
+        if (!item) return;
+        if (item === croppingItem) { exitCropMode(); return; }
+        enterCropMode(item);
+      });
+
+      // Drag to reposition image in crop mode
+      gallery.addEventListener('pointerdown', e => {
+        if (!croppingItem) return;
+        const img = e.target.closest('.gallery-item.cropping img');
+        if (!img) return;
+        e.preventDefault();
+        e.stopPropagation();
+        cropDragging = true;
+        cropStartX = e.clientX;
+        cropStartY = e.clientY;
+        cropOrigX = parseFloat(img.dataset.cropX) || 0;
+        cropOrigY = parseFloat(img.dataset.cropY) || 0;
+
+        function onCropMove(ev) {
+          if (!cropDragging) return;
+          const s = parseFloat(img.dataset.cropScale) || 1;
+          const dx = (ev.clientX - cropStartX) / s;
+          const dy = (ev.clientY - cropStartY) / s;
+          img.dataset.cropX = cropOrigX + dx;
+          img.dataset.cropY = cropOrigY + dy;
+          applyCrop(img);
+        }
+
+        function onCropUp() {
+          cropDragging = false;
+          document.removeEventListener('pointermove', onCropMove);
+          document.removeEventListener('pointerup', onCropUp);
+        }
+
+        document.addEventListener('pointermove', onCropMove);
+        document.addEventListener('pointerup', onCropUp);
+      });
+
+      // Scroll wheel to zoom in crop mode
+      gallery.addEventListener('wheel', e => {
+        if (!croppingItem) return;
+        const item = e.target.closest('.gallery-item.cropping');
+        if (!item) return;
+        e.preventDefault();
+        const img = item.querySelector('img');
+        let s = parseFloat(img.dataset.cropScale) || 1;
+        s += e.deltaY > 0 ? -0.08 : 0.08;
+        s = Math.max(1, Math.min(3, s));
+        img.dataset.cropScale = s;
+        applyCrop(img);
+        const slider = item.querySelector('.crop-controls input');
+        if (slider) slider.value = s;
+      }, { passive: false });
+
+    });
+  </script>
+</body>
+</html>
