@@ -300,16 +300,6 @@
     }
   },
   {
-    "index": "40",
-    "hidden": false,
-    "crop": {
-      "scale": 1,
-      "x": 0,
-      "y": 0,
-      "pct": true
-    }
-  },
-  {
     "index": "41",
     "hidden": false,
     "crop": {
@@ -816,6 +806,16 @@
       "scale": 2.35,
       "x": -20.962608055360718,
       "y": -38.0374148200804,
+      "pct": true
+    }
+  },
+  {
+    "index": "40",
+    "hidden": true,
+    "crop": {
+      "scale": 1,
+      "x": 0,
+      "y": 0,
       "pct": true
     }
   }
